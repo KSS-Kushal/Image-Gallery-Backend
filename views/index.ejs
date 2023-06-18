@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=
+    , initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form action="/uploadPhoto" enctype="multipart/form-data" method="post">
+        <input class="choose-file-btn" type="file" name="myImage" />
+        <input class="upload-btn" type="submit" value="Upload Photo" />
+    </form>
+
+    <div class="uploaded-images">
+        <% images.forEach(function(image) { %>
+            <img class="image" src="data:image/<%=image.image.contentType%>;base64,
+          <%=image.image.data.toString('base64')%>">
+            <% }); %>
+    </div>
+</body>
+
+</html>
