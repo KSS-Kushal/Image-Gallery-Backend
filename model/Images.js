@@ -7,11 +7,14 @@ const imageSchema = new Schema({
         required: true
     },
     image: {
-        type: String,
-        required: true
+        data: Buffer,
+        contentType: String,
     },
     url: {
         type: String
+    },
+    size: {
+        type: Number
     },
     tag: {
         type: Array
