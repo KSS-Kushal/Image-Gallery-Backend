@@ -18,8 +18,8 @@ router.post('/upload', fatchuser, async (req, res) => {
       if (err) {
         return res.status(500).json({ success: false, msg: "Internal Server Error" })
       }
-      console.log("fields : ", fields)
-      console.log("files : ", file.image.size)
+      // console.log("fields : ", fields)
+      // console.log("files : ", file)
       if (file.image.size > 10485760) { // >10 mb
         return res.status(400).json({ success: false, msg: "file is too big" });
       }
@@ -47,6 +47,56 @@ router.post('/upload', fatchuser, async (req, res) => {
   }
 });
 
-// Route 1 : Upload image using : POST "/api/image/upload". Required Auth
+// Route 2 : Delete an image using : DELETE "/api/image/delete/:id". Required Auth
+router.delete('/delete/:id', fatchuser, async (req, res) => {
+  try {
+    const userId = req.user;
+    if (!userId) {
+      return res.status(401).json({ success: false, msg: "Invaild token" });
+    }
+    // Delete the Image
+    const image = await Images.findByIdAndDelete(req.params.id);
+    if (image) {
+      return res.status(200).json({ success: true, image });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, msg: "Internal Server Error" });
+  }
+});
+
+// Route 3 : Fetch all images using : GET "/api/image/images". Required Auth
+router.get('/images', fatchuser, async (req, res)=>{
+  try {
+    const userId = req.user;
+    if(!userId){
+      return res.status(401).json({ success: false, msg: "Invaild token" });
+    }
+    // Fetch Images 
+    const images = await Images.find({user: userId});
+    if(images){
+      return res.status(200).json({success: true, images});
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, msg: "Internal Server Error" });
+  }
+});
+
+
+
+// Route 4 : Search images using : GET "/api/image/images/:tag". Required Auth
+router.get('/images/:tag', fatchuser, async (req, res)=>{
+  try {
+    const userId = req.user;
+    if(!userId){
+      return res.status(401).json({ success: false, msg: "Invaild token" });
+    }
+    const images = await Images.find({user: userId, tag: req.params.tag});
+    if(images){
+      return res.status(200).json({success: true, images});
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, msg: "Internal Server Error" });
+  }
+})
 
 module.exports = router
