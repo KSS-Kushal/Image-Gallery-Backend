@@ -7,9 +7,6 @@ const router = express.Router();
 
 const JWT_SECRET = "ecgjhges#35$jgf";
 
-// router.post('/abc',(req,res)=>{
-//     res.send("hello")
-// })
 
 // Route 1 : Create a user using : POST "/api/auth/createuser". Doesn't require Auth
 router.post('/createuser', async (req, res) => {

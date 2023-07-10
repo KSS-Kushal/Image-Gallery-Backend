@@ -10,6 +10,9 @@ const imageSchema = new Schema({
         data: Buffer,
         contentType: String,
     },
+    fileName:{
+        type: String
+    },
     url: {
         type: String
     },

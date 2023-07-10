@@ -31,8 +31,10 @@ router.post('/upload', fatchuser, async (req, res) => {
             data: fs.readFileSync(file.image.filepath),
             contentType: file.image.mimetype
           },
-          url: "https://localhost:5000/" + file.image.newFilename,
-          size: file.image.size
+          fileName: file.image.newFilename,
+          url: "http://localhost:5000/api/image/" + file.image.newFilename,
+          size: file.image.size,
+          tag: fields.tag ? fields.tag :''
         })
         if (image) {
           return res.status(200).json({ success: true, image });
@@ -65,16 +67,16 @@ router.delete('/delete/:id', fatchuser, async (req, res) => {
 });
 
 // Route 3 : Fetch all images using : GET "/api/image/images". Required Auth
-router.get('/images', fatchuser, async (req, res)=>{
+router.get('/images', fatchuser, async (req, res) => {
   try {
     const userId = req.user;
-    if(!userId){
+    if (!userId) {
       return res.status(401).json({ success: false, msg: "Invaild token" });
     }
     // Fetch Images 
-    const images = await Images.find({user: userId});
-    if(images){
-      return res.status(200).json({success: true, images});
+    const images = await Images.find({ user: userId }).select('-image');
+    if (images) {
+      return res.status(200).json({ success: true, images });
     }
   } catch (error) {
     return res.status(500).json({ success: false, msg: "Internal Server Error" });
@@ -84,15 +86,34 @@ router.get('/images', fatchuser, async (req, res)=>{
 
 
 // Route 4 : Search images using : GET "/api/image/images/:tag". Required Auth
-router.get('/images/:tag', fatchuser, async (req, res)=>{
+router.get('/images/:tag', fatchuser, async (req, res) => {
   try {
     const userId = req.user;
-    if(!userId){
+    if (!userId) {
       return res.status(401).json({ success: false, msg: "Invaild token" });
     }
-    const images = await Images.find({user: userId, tag: req.params.tag});
-    if(images){
-      return res.status(200).json({success: true, images});
+    const images = await Images.find({ user: userId, tag: req.params.tag });
+    if (images) {
+      return res.status(200).json({ success: true, images });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, msg: "Internal Server Error" });
+  }
+})
+
+
+
+// Route 5 : Get an images using : GET "/api/image/:id". Doesn't require Auth
+router.get('/:id', async (req, res) => {
+  try {
+    // const userId = req.user;
+    // if (!userId) {
+    //   return res.status(401).json({ success: false, msg: "Invaild token" });
+    // }
+    const images = await Images.findOne({ fileName: req.params.id });
+    if (images) {
+      res.set("Content-Type", images.image.contentType)
+      return res.status(200).send(images.image.data);
     }
   } catch (error) {
     return res.status(500).json({ success: false, msg: "Internal Server Error" });
