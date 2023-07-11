@@ -57,7 +57,7 @@ router.delete('/delete/:id', fatchuser, async (req, res) => {
       return res.status(401).json({ success: false, msg: "Invaild token" });
     }
     // Delete the Image
-    const image = await Images.findByIdAndDelete(req.params.id);
+    const image = await Images.findByIdAndDelete(req.params.id).select('-image');
     if (image) {
       return res.status(200).json({ success: true, image });
     }
