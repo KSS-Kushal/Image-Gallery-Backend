@@ -34,7 +34,7 @@ router.post('/upload', fatchuser, async (req, res) => {
           fileName: file.image.newFilename,
           url: "http://localhost:5000/api/image/" + file.image.newFilename,
           size: file.image.size,
-          tag: fields.tag ? fields.tag :''
+          tag: fields.tag ? fields.tag.toLocaleLowerCase() :''
         })
         if (image) {
           return res.status(200).json({ success: true, image });
