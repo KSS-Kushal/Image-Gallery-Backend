@@ -37,7 +37,7 @@ router.post('/createuser', async (req, res) => {
         const authToken = await jwt.sign(data, JWT_SECRET);
         return res.status(200).json({ success: true, authToken });
     } catch (error) {
-        return res.status(500).json({ success: false, msg: "Internal Server Error" });
+        return res.status(500).json({ success: false, msg: "Internal Server Error", error:error });
     }
 
 })
